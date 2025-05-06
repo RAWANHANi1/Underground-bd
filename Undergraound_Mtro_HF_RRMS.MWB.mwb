@@ -1,0 +1,867 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema Undergraound_Metro_s
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `Undergraound_Metro_s` ;
+
+-- -----------------------------------------------------
+-- Schema Undergraound_Metro_s
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Undergraound_Metro_s` DEFAULT CHARACTER SET utf8 ;
+USE `Undergraound_Metro_s` ;
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`user` (
+  `pass` INT NOT NULL,
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`cartegory`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`cartegory` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`post`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`post` (
+  `id` INT NOT NULL,
+  `title` VARCHAR(45) NOT NULL,
+  `description` VARCHAR(45) NOT NULL,
+  `pub_date` DATE NULL,
+  `user_id` INT NOT NULL,
+  `cartegory_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_post_user_idx` (`user_id` ASC),
+  INDEX `fk_post_cartegory1_idx` (`cartegory_id` ASC),
+  CONSTRAINT `fk_post_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `Undergraound_Metro_s`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_post_cartegory1`
+    FOREIGN KEY (`cartegory_id`)
+    REFERENCES `Undergraound_Metro_s`.`cartegory` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`tag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`tag` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`tag_has_post`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`tag_has_post` (
+  `tag_id` INT NOT NULL,
+  `post_id` INT NOT NULL,
+  PRIMARY KEY (`tag_id`, `post_id`),
+  INDEX `fk_tag_has_post_post1_idx` (`post_id` ASC),
+  INDEX `fk_tag_has_post_tag1_idx` (`tag_id` ASC),
+  CONSTRAINT `fk_tag_has_post_tag1`
+    FOREIGN KEY (`tag_id`)
+    REFERENCES `Undergraound_Metro_s`.`tag` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tag_has_post_post1`
+    FOREIGN KEY (`post_id`)
+    REFERENCES `Undergraound_Metro_s`.`post` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`driver`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`driver` (
+  `driv_ssn` CHAR(9) NOT NULL,
+  `fname` VARCHAR(45) NOT NULL,
+  `miti` CHAR(1) NOT NULL,
+  `lname` VARCHAR(45) NULL,
+  `address` VARCHAR(45) NULL,
+  `license` INT NULL,
+  `salary` INT NOT NULL,
+  `bdate` VARCHAR(45) NULL,
+  `sex` CHAR(1) NOT NULL,
+  `phone` CHAR(11) NOT NULL,
+  PRIMARY KEY (`driv_ssn`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`station`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`station` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `no_of_plateform` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`other_employee`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`other_employee` (
+  `other_ssn` CHAR(9) NOT NULL,
+  `fname` VARCHAR(45) NOT NULL,
+  `minit` CHAR(1) NULL,
+  `lname` VARCHAR(45) NULL,
+  `type_of_ job` VARCHAR(45) NOT NULL,
+  `bdate` VARCHAR(45) NULL,
+  `address` VARCHAR(45) NULL,
+  `phone` INT NOT NULL,
+  `salary` INT NOT NULL,
+  `sex` CHAR(1) NOT NULL,
+  `station_id` INT NOT NULL,
+  PRIMARY KEY (`other_ssn`),
+  INDEX `fk_other_employee_station1_idx` (`station_id` ASC),
+  CONSTRAINT `fk_other_employee_station1`
+    FOREIGN KEY (`station_id`)
+    REFERENCES `Undergraound_Metro_s`.`station` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`customer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`customer` (
+  `cust_ssn` CHAR(9) NOT NULL,
+  `fname` VARCHAR(45) NOT NULL,
+  `mint` CHAR(1) NOT NULL,
+  `lname` VARCHAR(45) NOT NULL,
+  `sex` CHAR(1) NOT NULL,
+  `address` VARCHAR(45) NOT NULL,
+  `phone` INT NOT NULL,
+  `bdate` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`cust_ssn`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`mertro`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`mertro` (
+  `code` INT NOT NULL,
+  `speed` INT NOT NULL,
+  `model` VARCHAR(45) NOT NULL,
+  `no_of_cars` INT NOT NULL,
+  PRIMARY KEY (`code`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`technical`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`technical` (
+  `tecnical_ssn` CHAR(9) NOT NULL,
+  `tgrade` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`tecnical_ssn`),
+  CONSTRAINT `fk_technical_other_employee1`
+    FOREIGN KEY (`tecnical_ssn`)
+    REFERENCES `Undergraound_Metro_s`.`other_employee` (`other_ssn`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`places`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`places` (
+  `station_id` INT NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `famous_places` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`station_id`, `famous_places`),
+  INDEX `fk_places_station1_idx` (`station_id` ASC),
+  CONSTRAINT `fk_places_station1`
+    FOREIGN KEY (`station_id`)
+    REFERENCES `Undergraound_Metro_s`.`station` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`line`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`line` (
+  `no` INT NOT NULL,
+  `no_of_station` INT NOT NULL,
+  `length` INT NOT NULL,
+  `terminal` VARCHAR(45) NOT NULL,
+  `open` INT NOT NULL,
+  PRIMARY KEY (`no`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`smart_card`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`smart_card` (
+  `code` INT NOT NULL,
+  `start_date` VARCHAR(45) NOT NULL,
+  `expirt_date` VARCHAR(45) NOT NULL,
+  `price` INT NOT NULL,
+  `numbre_of_station` INT NOT NULL,
+  `customer_ssn` CHAR(9) NOT NULL,
+  PRIMARY KEY (`code`),
+  INDEX `fk_smart_card_customer1_idx` (`customer_ssn` ASC),
+  CONSTRAINT `fk_smart_card_customer1`
+    FOREIGN KEY (`customer_ssn`)
+    REFERENCES `Undergraound_Metro_s`.`customer` (`cust_ssn`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`drive`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`drive` (
+  `driver_driv_ssn` CHAR(9) NOT NULL,
+  `mertro_code` INT NOT NULL,
+  `fshift` TIME NOT NULL,
+  `tshift` TIME NOT NULL,
+  PRIMARY KEY (`driver_driv_ssn`, `mertro_code`),
+  INDEX `fk_driver_has_mertro_mertro1_idx` (`mertro_code` ASC),
+  INDEX `fk_driver_has_mertro_driver1_idx` (`driver_driv_ssn` ASC),
+  CONSTRAINT `fk_driver_has_mertro_driver1`
+    FOREIGN KEY (`driver_driv_ssn`)
+    REFERENCES `Undergraound_Metro_s`.`driver` (`driv_ssn`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_driver_has_mertro_mertro1`
+    FOREIGN KEY (`mertro_code`)
+    REFERENCES `Undergraound_Metro_s`.`mertro` (`code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`stop`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`stop` (
+  `mertro_code` INT NOT NULL,
+  `station_id` INT NOT NULL,
+  `arrive` TIME NOT NULL,
+  `leave` TIME NOT NULL,
+  PRIMARY KEY (`station_id`),
+  INDEX `fk_mertro_has_station_station1_idx` (`station_id` ASC),
+  INDEX `fk_mertro_has_station_mertro1_idx` (`mertro_code` ASC),
+  CONSTRAINT `fk_mertro_has_station_mertro1`
+    FOREIGN KEY (`mertro_code`)
+    REFERENCES `Undergraound_Metro_s`.`mertro` (`code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_mertro_has_station_station1`
+    FOREIGN KEY (`station_id`)
+    REFERENCES `Undergraound_Metro_s`.`station` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`station_has_line`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`station_has_line` (
+  `station_id` INT NOT NULL,
+  `line_no` INT NOT NULL,
+  PRIMARY KEY (`station_id`, `line_no`),
+  INDEX `fk_station_has_line_line1_idx` (`line_no` ASC),
+  INDEX `fk_station_has_line_station1_idx` (`station_id` ASC),
+  CONSTRAINT `fk_station_has_line_station1`
+    FOREIGN KEY (`station_id`)
+    REFERENCES `Undergraound_Metro_s`.`station` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_station_has_line_line1`
+    FOREIGN KEY (`line_no`)
+    REFERENCES `Undergraound_Metro_s`.`line` (`no`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Undergraound_Metro_s`.`pass`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Undergraound_Metro_s`.`pass` (
+  `smart_card_code` INT NOT NULL,
+  `station_id` INT NOT NULL,
+  `from_station` VARCHAR(45) NOT NULL,
+  `to_station` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`smart_card_code`, `station_id`),
+  INDEX `fk_station_has_smart_card_smart_card1_idx` (`smart_card_code` ASC),
+  INDEX `fk_station_has_smart_card_station1_idx` (`station_id` ASC),
+  CONSTRAINT `fk_station_has_smart_card_station1`
+    FOREIGN KEY (`station_id`)
+    REFERENCES `Undergraound_Metro_s`.`station` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_station_has_smart_card_smart_card1`
+    FOREIGN KEY (`smart_card_code`)
+    REFERENCES `Undergraound_Metro_s`.`smart_card` (`code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`user`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`user` (`pass`, `id`, `name`, `email`) VALUES (225, 1122, 'ahmed', 'ahmedsalah');
+INSERT INTO `Undergraound_Metro_s`.`user` (`pass`, `id`, `name`, `email`) VALUES (556, 4455, 'ali', 'aliahmed');
+INSERT INTO `Undergraound_Metro_s`.`user` (`pass`, `id`, `name`, `email`) VALUES (448, 5566, 'rahma', 'rahmaggamal');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`cartegory`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`cartegory` (`id`, `name`) VALUES (2003, 'gaming');
+INSERT INTO `Undergraound_Metro_s`.`cartegory` (`id`, `name`) VALUES (2002, 'exam');
+INSERT INTO `Undergraound_Metro_s`.`cartegory` (`id`, `name`) VALUES (2010, 'fun');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`post`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`post` (`id`, `title`, `description`, `pub_date`, `user_id`, `cartegory_id`) VALUES (555, 'fun', 'funandl', NULL, 1122, 2002);
+INSERT INTO `Undergraound_Metro_s`.`post` (`id`, `title`, `description`, `pub_date`, `user_id`, `cartegory_id`) VALUES (445, 'exam', 'final', NULL, 1122, 2002);
+INSERT INTO `Undergraound_Metro_s`.`post` (`id`, `title`, `description`, `pub_date`, `user_id`, `cartegory_id`) VALUES (225, 'game', 'freetime', NULL, 1122, 2002);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`tag`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`tag` (`id`, `name`) VALUES (7799, 'drop');
+INSERT INTO `Undergraound_Metro_s`.`tag` (`id`, `name`) VALUES (2256, 'soft');
+INSERT INTO `Undergraound_Metro_s`.`tag` (`id`, `name`) VALUES (1147, 'hard');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`tag_has_post`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`tag_has_post` (`tag_id`, `post_id`) VALUES (7799, 555);
+INSERT INTO `Undergraound_Metro_s`.`tag_has_post` (`tag_id`, `post_id`) VALUES (2256, 225);
+INSERT INTO `Undergraound_Metro_s`.`tag_has_post` (`tag_id`, `post_id`) VALUES (1147, 445);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`driver`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('990881333', 'Ahmed', 'H', 'Hamdy', 'Shubra ,Giza', 030719991, 79000, '12-1-1999', 'M', '01833044920');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('301219772', 'Jehan', 'A', 'Amir', 'Helwan , Cairo', 202034001, 70000, '1-2-1992', 'F', '01400260280');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('431331002', 'Amir', 'F', 'Fathi', 'Maadi ,Cairo', 261120023, 72000, '3-3-1991', 'M', '01428856790');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('133200134', 'Amira', 'M', 'Fadi', 'Elmoonib,Giza', 978456300, 75000, '2-2-1978', 'F', '01691052044');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('221550403', 'Sayed', 'O', 'Omar', 'Helwan , Cairo', 801120091, 71000, '4-4-1980', 'M', '01740420550');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('333188099', 'Omar', 'A', 'Amr', 'Abbasia ,Cairo', 707059441, 73000, '5-9-1989', 'M', '01630340511');
+INSERT INTO `Undergraound_Metro_s`.`driver` (`driv_ssn`, `fname`, `miti`, `lname`, `address`, `license`, `salary`, `bdate`, `sex`, `phone`) VALUES ('304055221', 'Sami', 'S', 'Sayed', 'Maadi ,Cairo', 123456789, 70000, '17-12-1981', 'M', '01655500910');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`station`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (1, 'Helwan', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (2, 'Ain Helwan', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (3, 'Helwan University', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (4, 'Wadi Hof', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (5, 'Hadayek Helwan', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (6, 'El_Maasara', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (7, 'Tora El-Asmant', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (8, 'Kozzika', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (9, 'Tora El-Balad', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (10, 'Sakanat El-Maadi', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (11, 'Maadi', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (12, 'Hadayek El-Maadi', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (13, 'Dar El-Salam', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (14, 'El-Zahraa', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (15, 'Mar Girgis', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (16, 'El-Malek El-Saleh', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (17, 'Al-Sayede Zeinab', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (18, 'Seed Zaghloul', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (19, 'Sadat', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (20, 'Nasser', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (21, 'Orabi', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (22, 'Al-Shohadaa', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (23, 'Ghamra', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (24, 'El-Demerdash', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (25, 'Manshiet El-Sadr', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (26, 'Kobri El-Qobba', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (27, 'Hammamat El-Qobba', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (28, 'Saray El-Qobba', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (29, 'Hadayeq El-Zaitoun', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (30, 'Helmeyet El-Zaitoun', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (31, 'El-Matareyya', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (32, 'Ain Shams', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (33, 'Ezbet El-Nakhl', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (34, 'El-Marg', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (35, 'New El-Marg', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (36, 'El-Mounib', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (37, 'Sakiat Mekky', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (38, 'Omm El-Masryeen', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (39, 'El Giza', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (40, 'Faisal', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (41, 'Cairo University', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (42, 'El Bohoth', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (43, 'Dokki', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (44, 'Opera', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (45, 'Sadat', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (46, 'Mohamed Naguib', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (47, 'Attaba', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (48, 'Al-Shohadaa', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (49, 'Masarra', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (50, 'Road El-Farag', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (51, 'St.Teresa', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (52, 'Khalafay', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (53, 'Mezallat', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (54, 'Kolleyyet El-Zeraa', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (55, 'Shubra El-Kheima', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (56, 'Adly Mansour', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (57, 'El-Haykestep', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (58, 'Omar Ibn El-khattab', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (59, 'Qobaa', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (60, 'Hesham Barakat', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (61, 'El-Nozha', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (62, 'Nadi El-Shams', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (63, 'Alf Maskan', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (64, 'Helipolis Square', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (65, 'Haroun', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (66, 'Al-Ahram', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (67, 'Koleyet El-Banat', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (68, 'Stadium', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (69, 'fair zone', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (70, 'Abbassia', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (71, 'Abdou Pasha', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (72, 'El Geish', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (73, 'Bab El Shaaria', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (74, 'Attaba', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (75, 'Nasser', 4);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (76, 'Maspero', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (77, 'Safaa Hegazy', 2);
+INSERT INTO `Undergraound_Metro_s`.`station` (`id`, `name`, `no_of_plateform`) VALUES (78, 'Kit Kat', 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`other_employee`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('578430011', 'Ahmed', 'M', 'Ali', 'Security', '01-12-1981', 'Ramsis Cairo', 01115966671, 37000, 'M', 22);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('665303742', 'Mahmoud', 'A', 'Youssef', 'Technical', '02-11-1982', '6Nire Street,Maadi', 01008458101, 50000, 'M', 11);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('875480023', 'Rawan', 'H', 'Ahmed', 'Manager', '10-01-1990', 'Hrlioporis Cairo', 01237001311, 200000, 'F', 75);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('334566201', 'Fathi', 'S', 'Sayed', 'Cleaner', '03-03-1991', 'Abbasia,Cairo', 01300879101, 20000, 'M', 63);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('223560089', 'Amira', 'A', 'Youssef', 'Receptionst', '04-0501995', 'Ramsis Cairo', 01556673910, 70000, 'F', 19);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('113356000', 'Sara', 'Y', 'Mohamed', 'Receptionst', '03-08-1994', '6-october,Cairo', 01118878914, 80000, 'F', 45);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('663458001', 'Malak', 'B', 'Waheed', 'Cleaner', '17-09-1991', 'Elmonib,Giza', 01811333445, 15000, 'F', 36);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('448800023', 'Yassin', 'M', 'Ali', 'Receptionst', '30-11-1983', 'Helwan,Cairo', 01555333444, 70000, 'M', 3);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('300211644', 'Youssef', 'B', 'Mahmoud', 'Technical', '24-08-1991', 'Darelsalam,Cairo', 01535600781, 56000, 'M', 14);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('991106442', 'Marawan', 'C', 'Amear', 'Technical', '26-12-1986', 'Hadayed Maadi,Cairo', 01114589110, 60000, 'M', 16);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('800456311', 'Fatma', 'B', 'Sami', 'Receptionst', '20-5-1978', 'Attaba,Cairo', 01744333550, 80000, 'F', 70);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('200053367', 'Farah', 'H', 'Adam', 'Manager', '30-01-1980', 'Helwan,Cairo', 01155600754, 20000, 'F', 60);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('200520200', 'Sami', 'S', 'Seif', 'Cleaner', '20-05-1980', 'Zamalek,Cairo', 01133050043, 17000, 'M', 53);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('400056388', 'Adhame', 'S', 'Fthi', 'Secyrity', '05-05-1993', 'Shobra,Cairo', 01883340033, 40000, 'M', 9);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('700059260', 'John', 'C', 'Carlos', 'Secyrity', '07-07-1986', '6-october,Cairo', 01178003332, 45000, 'M', 72);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('594322001', 'Carla', 'F', 'John ', 'Cleaner', '06-06-1987', 'Ramsis Cairo', 01110020030, 20000, 'F', 75);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('888491042', 'Haydi', 'Y', 'Shahen', 'Secyrity', '25-01-1987', '6-october,Cairo', 01453002211, 50000, 'F', 72);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('455321003', 'Hala', 'H', 'Hasan', 'Manager', '06-07-1994', 'Helwan,Cairo', 01223673910, 180000, 'F', 22);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('500333421', 'Shahd', 'D', 'Omar', 'Technical', '05-06-1980', 'Maadi,Cairo', 01117005440, 50000, 'F', 1);
+INSERT INTO `Undergraound_Metro_s`.`other_employee` (`other_ssn`, `fname`, `minit`, `lname`, `type_of_ job`, `bdate`, `address`, `phone`, `salary`, `sex`, `station_id`) VALUES ('200226113', 'Asala', 'S', 'Nasri', 'Manager', '24-08-1991', 'Maadi,Cairo', 01134400600, 200000, 'F', 11);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`customer`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('578430011', 'Ahmed', 'M', 'Ali', 'M', 'Ramsis,Cairo', 01115566671, '01-12-1981');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('665303742', 'Mahmoud', 'A', 'Youssef', 'M', '6October,Cairo', 01008458101, '02-11-1982');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('875480023', 'Rawan', 'H', 'Ahmed', 'F', 'Helipoils,Cairo', 01237001311, '10-01-1990');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('334566201', 'Fathi', 'S', 'Sayed', 'M', 'Abbasia,Cairo', 01300879101, '03-03-1991');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('223560089', 'Amira', 'A', 'Yassin', 'F', 'Ramsis,Cairo', 01556673910, '04-05-1995');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('506033202', 'Sara', 'S', 'Shady', 'F', 'Tahrir,Cairo', 01830055001, '4-8-2001');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('812600840', 'Eman', 'A', 'Sayed', 'F', 'Dar-elsalam,Cairo', 01702280334, '20-5-2001');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('991973012', 'Adam', 'M', 'Aymen', 'M', 'Elmonib,Giza', 01814303111, '5-7-2001');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('271119920', 'John', 'M', 'Mina', 'M', 'Helwan,Cairo', 01603012789, '25-11-2002');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('899122300', 'Mina', 'A', 'Tamer', 'M', 'Attaba,Cairo', 01912600840, '22-10-2000');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('757682110', 'Youness', 'S', 'Farid', 'M', 'Abbasia,Cairo', 01830480662, '30-12-2002');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('693451002', 'Yahia', 'B', 'Ali', 'M', '6October,Cairo', 01743308220, '29-10-2003');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('314303111', 'Rawda', 'Y', 'Ahmed', 'F', 'Helipoils,Cairo', 01853451002, '8-8-2004');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('202280334', 'Farida', 'T', 'Mostafa', 'F', 'Zamalek,Cairo', 01410025435, '5-5-2003');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('301219990', 'Yasin', 'N', 'Mohamed', 'M', 'Hadekmaadi,Cairo', 01771119920, '6-6-2001');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('590600333', 'Jalal', 'M', 'Ashraf', 'F', 'Daresalam,Cairo', 01806033202, '1-1-2000');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('333590600', 'Abdallah', 'A', 'Fathi', 'M', 'Helwan,Cairo', 01790120053, '1-2-2001');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('950301121', 'Sayed', 'S', 'Taha', 'M', 'Shubra,Cairo', 01800620230, '10-2-2003');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('200226110', 'Waael', 'T', 'Kamel', 'M', 'Maadi,Giza', 01612608403, '3-5-2002');
+INSERT INTO `Undergraound_Metro_s`.`customer` (`cust_ssn`, `fname`, `mint`, `lname`, `sex`, `address`, `phone`, `bdate`) VALUES ('203080321', 'Marayam', 'Y', 'Nader', 'M', 'Ramsis,Cairo', 01791973012, '2-10-2004');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`mertro`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (1234, 20, 'Ac_1920', 9);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (4312, 100, 'Ab_2012', 8);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (4321, 120, 'Ae_2020', 8);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (3421, 80, 'Ac_1920', 9);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (2341, 80, 'Ao_1980', 9);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (1423, 100, 'Ab_2012', 8);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (1324, 100, 'Ab_2012', 8);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (1432, 80, 'Ac_1980', 9);
+INSERT INTO `Undergraound_Metro_s`.`mertro` (`code`, `speed`, `model`, `no_of_cars`) VALUES (3412, 120, 'Ae_2020', 8);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`technical`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`technical` (`tecnical_ssn`, `tgrade`) VALUES ('665303742', 'Second degree');
+INSERT INTO `Undergraound_Metro_s`.`technical` (`tecnical_ssn`, `tgrade`) VALUES ('300211644', 'First degree');
+INSERT INTO `Undergraound_Metro_s`.`technical` (`tecnical_ssn`, `tgrade`) VALUES ('991106442', 'Thirdd degree');
+INSERT INTO `Undergraound_Metro_s`.`technical` (`tecnical_ssn`, `tgrade`) VALUES ('500333421', 'Second degree');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`places`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (3, 'Cairo', 'Helwan Universty');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (19, 'Cairo', 'Tahrir Square');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (20, 'Cairo', 'Down Town');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (21, 'Cairo', 'Down Town');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (22, 'Cairo', 'Ramses Squar');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (25, 'Cairo', 'Ainshams Universty');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (41, 'Giza', 'Cairo Universty');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (46, 'Cairo', 'Mohamed Farid Square');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (50, 'Cairo', 'Shoubra Street');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (56, 'Cairo', 'City Of Salsm');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (58, 'Cairo', 'Nadi El-Dakhlia');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (60, 'Cairo', 'New El- Nozha');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (77, 'Cairo', 'El-Zamlk');
+INSERT INTO `Undergraound_Metro_s`.`places` (`station_id`, `city`, `famous_places`) VALUES (70, 'Cairo', 'Ainshams Universty');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`line`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`line` (`no`, `no_of_station`, `length`, `terminal`, `open`) VALUES (1, 35, 44.3, 'Helwan_Marg', 1487);
+INSERT INTO `Undergraound_Metro_s`.`line` (`no`, `no_of_station`, `length`, `terminal`, `open`) VALUES (2, 20, 21.6, 'Shobraelkhrima_Elmounib', 1996);
+INSERT INTO `Undergraound_Metro_s`.`line` (`no`, `no_of_station`, `length`, `terminal`, `open`) VALUES (3, 23, 19.5, 'Kitkat_Adlymansoure', 2012);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`smart_card`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (45033, '12-1-2018', '12-3-2018', 360, 8, '578430011');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (36811, '3-3-2018', '3-6-2018', 450, 16, '665303742');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (67122, '4-2-2018', '4-5-2018', 535, 26, '875480023');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (22001, '1-2-2018', '1-5-2018', 450, 16, '334566201');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (55343, '8-7-2018', '8-10-2018', 700, 37, '223560089');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (10642, '7-6-2018', '7-9-2018', 700, 37, '506033202');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (30356, '3-4-2018', '3-7-2018', 360, 8, '812600840');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (50640, '24-5-2018', '24-8-2018', 450, 15, '991973012');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (80720, '20-3-2018', '20-5-2018', 360, 7, '271119920');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (60345, '4-4-2018', '4-7-2018', 535, 22, '899122300');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (40533, '3-12-2018', '3-2-2019', 700, 30, '757682110');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (20566, '3-11-2018', '3-1-2019', 700, 40, '693451002');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (60155, '2-10-2018', '2-12-2018', 700, 31, '314303111');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (50344, '10-10-2018', '10-12-2018', 535, 20, '202280334');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (11036, '10-11-2018', '10-1-2018', 535, 38, '301219990');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (70430, '4-5-2018', '4-8-2018', 535, 25, '590600333');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (80046, '3-4-2018', '3-7-2018', 360, 9, '333590600');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (20208, '5-8-2018', '5-11-2018', 360, 12, '950301121');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (26115, '26-11-2018', '26-1-2018', 450, 13, '200226110');
+INSERT INTO `Undergraound_Metro_s`.`smart_card` (`code`, `start_date`, `expirt_date`, `price`, `numbre_of_station`, `customer_ssn`) VALUES (20051, '9-9-2018', '9-11-2018', 450, 11, '203080321');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`drive`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('304055221', 1234, '5:00', '9:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('990881333', 4321, '9:00', '13:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('301219772', 4312, '13:00', '18:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('133200134', 3421, '18:00', '23:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('431331002', 1423, '5:00', '9:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('221550403', 3412, '9:00', '13:00');
+INSERT INTO `Undergraound_Metro_s`.`drive` (`driver_driv_ssn`, `mertro_code`, `fshift`, `tshift`) VALUES ('333188099', 1432, '18:00', '23:00');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`stop`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 1, '6:00', '6:02');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 2, '6:02', '6:04');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 3, '6:04', '6:06');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 4, '6:06', '6:08');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 5, '6:08', '6:10');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 6, '6:10', '6:12');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 7, '6:12', '6:14');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 8, '6:14', '6:16');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 9, '6:16', '6:18');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 10, '6:18', '6:20');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 11, '6:20', '6:22');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 12, '6:22', '6:24');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 13, '6:24', '6:26');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 14, '6:26', '6:28');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 15, '6:28', '6:30');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 16, '6:30', '6:32');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 17, '6:32', '6:34');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 18, '6:34', '6:36');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 19, '6:36', '6:38');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 20, '6:38', '6:40');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 21, '6:40', '6:42');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 22, '6:42', '6:44');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 23, '6:44', '6:46');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 24, '6:46', '6:48');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 25, '6:48', '6:50');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 26, '6:50', '6:52');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 27, '6:52', '6:54');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 28, '6:54', '6:56');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 29, '6:56', '6:58');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 30, '6:58', '7:00');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 31, '7:00', '7:02');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 32, '7:02', '7:04');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 33, '7:04', '7:06');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 34, '7:06', '7:08');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (1234, 35, '7:08', '7:10');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 36, '6:00', '6:02');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 37, '6:02', '6:04');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 38, '6:04', '6:06');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 39, '6:06', '6:08');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 40, '6:08', '6:10');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 41, '6:10', '6:12');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 42, '6:12', '6:14');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 43, '6:14', '6:16');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 44, '6:16', '6:18');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 45, '6:18', '6:20');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 46, '6:20', '6:22');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 47, '6:22', '6:24');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 48, '6:24', '6:26');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 49, '6:26', '6:28');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 50, '6:28', '6:30');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 51, '6:30', '6:32');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 52, '6:32', '6:34');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 53, '6:34', '6:36');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 54, '6:36', '6:38');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4312, 55, '6:38', '6:40');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 56, '6:00', '6:02');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 57, '6:02', '6:04');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 58, '6:04', '6:06');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 59, '6:06', '6:08');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 60, '6:08', '6:10');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 61, '6:10', '6:12');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 62, '6:12', '6:14');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 63, '6:14', '6:16');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 64, '6:16', '6:18');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 65, '6:18', '6:20');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 66, '6:20', '6:22');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 67, '6:22', '6:24');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 68, '6:24', '6:26');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 69, '6:26', '6:28');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 70, '6:28', '6:30');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 71, '6:30', '6:32');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 72, '6:32', '6:34');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 73, '6:34', '6:36');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 74, '6:36', '6:38');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 75, '6:38', '6:40');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 76, '6:40', '6:42');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 77, '6:42', '6:44');
+INSERT INTO `Undergraound_Metro_s`.`stop` (`mertro_code`, `station_id`, `arrive`, `leave`) VALUES (4321, 78, '6:44', '6:46');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`station_has_line`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (1, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (2, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (3, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (4, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (5, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (6, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (7, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (8, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (9, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (10, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (11, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (12, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (13, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (14, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (15, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (16, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (17, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (18, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (19, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (20, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (21, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (22, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (23, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (24, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (25, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (26, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (27, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (28, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (29, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (30, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (31, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (32, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (34, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (35, 1);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (36, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (37, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (38, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (39, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (40, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (41, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (42, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (43, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (44, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (45, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (46, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (47, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (48, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (49, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (50, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (51, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (52, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (53, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (54, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (55, 2);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (56, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (57, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (58, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (59, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (60, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (61, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (62, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (63, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (64, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (65, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (66, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (67, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (68, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (69, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (70, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (71, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (72, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (73, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (74, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (75, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (76, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (77, 3);
+INSERT INTO `Undergraound_Metro_s`.`station_has_line` (`station_id`, `line_no`) VALUES (78, 3);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Undergraound_Metro_s`.`pass`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Undergraound_Metro_s`;
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (36811, 9, 'Sakanat El-Maadi', 'Helwan University');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (67122, 8, 'Tora El-Balad', 'Manshiet El-Sadr');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (22001, 46, 'Cairo University', 'El-Demerdash');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (55343, 1, 'Helwan ', 'Al-Sayede Zeinab');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (10642, 2, 'Ain Helwan', 'Koleyet El-Banat');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (30396, 31, 'Abbassia', 'El-Demerdash');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (50640, 16, 'Sadat', 'Wadi Hof');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (80720, 15, 'El-Malek El-Saleh', 'Ghamra');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (60345, 30, 'El-Matareyya', 'El-Mounib');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (40533, 10, 'Maadi', 'Masarra');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (20566, 7, 'Helwan ', 'Masarra');
+INSERT INTO `Undergraound_Metro_s`.`pass` (`smart_card_code`, `station_id`, `from_station`, `to_station`) VALUES (60155, 18, 'Sadat', 'Cairo University');
+
+COMMIT;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
